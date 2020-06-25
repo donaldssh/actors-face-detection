@@ -39,21 +39,24 @@ def main():
     # load the youtube video
     stream = CamGear(source=url_video, y_tube=True).start() # YouTube Video URL as input
 
-
+    # loop over all the video frames
     while True:
-        frame_normal = stream.read()
+        frame = stream.read()
         
-        if frame_normal is None:   
+        if frame is None:   
             print("End of the video")
             break
         
-        frame = cv2.resize(frame_normal, None, fx=0.5, fy=0.5)
-        
-
+        # resize the frame 
+        frame = cv2.resize(frame, None, fx=0.5, fy=0.5)
+            
+        # compute the grayscale image --> for the cascade classifier
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
-        
+        # detect the faces with cascade classifier
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        
+        # loop over all the detected faces
         for (x,y,w,h) in faces:
             frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
             roi_gray = gray[y:y+h, x:x+w]
@@ -67,27 +70,21 @@ def main():
             print()
             print("[INFO] classification took {:.5} seconds".format(end - start))
             
+            # find the index of the class with higher probabilitiy
+            idx = np.argsort(preds[0])[::-1][0]
             
-            # sort the indexes of the probabilities in descending order (higher
-            # probabilitiy first) and grab the top-5 predictions
-            idxs = np.argsort(preds[0])[::-1][:5]
-            # loop over the top-5 predictions and display them
-            for (i, idx) in enumerate(idxs):
-                # draw the top prediction on the input image
-                if i == 0:
-                    text = "Label: {}, {:.2f}%".format(classes[idx], preds[0][idx] * 100)
-                    
-                    cv2.putText(frame, text, (5, 25),  cv2.FONT_HERSHEY_SIMPLEX,
-                        0.7, (0, 0, 255), 2)
-                    
-                # display the predicted label + associated probability to the
-                # console	
-                print("[INFO] {}. label: {}, probability: {:.5}".format(i + 1, classes[idx], preds[0][idx]))
+            text = "Label: {}, {:.2f}%".format(classes[idx], preds[0][idx] * 100)
+            
+            cv2.putText(frame, text, (5, 25),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            
+            print("[INFO] label: {}, probability: {:.5}".format( classes[idx], preds[0][idx]))    
+            
                             
         cv2.imshow('videoframe',frame)    
         
         key = cv2.waitKey(10) 
         
+        # quit if q is pressed, or pause if p is pressed
         if key == ord('q'): 
             break
         elif key == ord('p'): 
@@ -98,5 +95,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
     
