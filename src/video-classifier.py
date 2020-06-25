@@ -1,31 +1,48 @@
 import cv2
 import time
 import numpy as np
+import argparse
 from vidgear.gears import CamGear
 
 
+def video_url(argument):
+    switcher = {   
+        "adam" : lambda : "https://www.youtube.com/watch?v=eghK5yMpNuc",
+        "alyssa" : lambda : "https://www.youtube.com/watch?v=dmMbfKnT38k",
+        "bruce" : lambda : "https://www.youtube.com/watch?v=-pwvctnQUYM"
+    }
+    return switcher.get(argument, lambda :  bruce)()
+
 
 def main():
+    
+    parser = argparse.ArgumentParser(description='Actor video classifier')
+    parser.add_argument('--input', type=str, help='Path to video')  
+    args = parser.parse_args()
+    
+    url_video = video_url(args.input)
     
     classes = ["Adam Sandler", "Alyssa Milano", "Bruce Willis", "Denise Richards",
             "George Clooney", "Gwyneth Paltrow", "Hugh Jackman", "Jason Statham",
             "Jennifer Love Hewitt", "Lindsay Lohan", "Mark Ruffalo", 
             "Robert Downey Jr", "Will Smith"]
 
-    face_cascade = cv2.CascadeClassifier('/usr/share/opencv4/haarcascades/haarcascade_frontalface_default.xml')
-    net = cv2.dnn.readNetFromONNX("../../trained-nets/CNNNet_13.onnx");
+
+    face_cascade = cv2.CascadeClassifier('../data/face_cascade_cv2/haarcascade_frontalface_default.xml')
+    net = cv2.dnn.readNetFromONNX("../data/trained_net/CNNNet_13.onnx")
+    
 
 
-    url_adam = "https://www.youtube.com/watch?v=eghK5yMpNuc"
-    url_alyssa = "https://www.youtube.com/watch?v=dmMbfKnT38k"
-    url_bruce = "https://www.youtube.com/watch?v=-pwvctnQUYM"
-
-
-    stream = CamGear(source=url_bruce, y_tube=True).start() # YouTube Video URL as input
+    stream = CamGear(source=url_video, y_tube=True).start() # YouTube Video URL as input
 
     count = 0
     while True:
         frame_normal = stream.read()
+        
+        if frame_normal is None:   #se sono finiti i frame del video
+            print("End of the video")
+            break
+        
         frame = cv2.resize(frame_normal, None, fx=0.5, fy=0.5)
         
 
@@ -43,6 +60,7 @@ def main():
             start = time.time()
             preds = net.forward()
             end = time.time()
+            print()
             print("[INFO] classification took {:.5} seconds".format(end - start))
             # sort the indexes of the probabilities in descending order (higher
             # probabilitiy first) and grab the top-5 predictions
@@ -62,12 +80,14 @@ def main():
                             
         cv2.imshow('videoframe',frame)    
         
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+        key = cv2.waitKey(10) 
+        
+        if key == ord('q'): 
             break
+        elif key == ord('p'): 
+            cv2.waitKey(0)
 
-    stream.release()
     cv2.destroyAllWindows() 
-
 
 
 if __name__ == "__main__":
