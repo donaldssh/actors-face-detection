@@ -13,11 +13,11 @@ def video_url(argument):
         "bruce":    lambda : "https://www.youtube.com/watch?v=-pwvctnQUYM",
         "denise":   lambda : "https://www.youtube.com/watch?v=6sb0Ii0EkUY",
         "george":   lambda : "https://www.youtube.com/watch?v=0t1-Jy3UNRY",
-        "gwyneth":  lambda : "not found",
+        "gwyneth":  lambda : "https://www.youtube.com/watch?v=Eog5RGbqgKQ",
         "hugh":     lambda : "https://www.youtube.com/watch?v=vJdLROysHHs",  
-        "jason":    lambda : "not found",
-        "jennifer": lambda : "not yet found",
-        "lindsay":  lambda : "not yet found",
+        "jason":    lambda : "https://www.youtube.com/watch?v=ehDVAfH9038",
+        "jennifer": lambda : "https://www.youtube.com/watch?v=xt1bCqZaD0k",
+        "lindsay":  lambda : "https://www.youtube.com/watch?v=F6g85lp2wJc", #"https://www.youtube.com/watch?v=6oAdeUP4bhs",
         "mark":     lambda : "https://www.youtube.com/watch?v=zuGp-0G1p4M", 
         "robert":   lambda : "https://www.youtube.com/watch?v=w5cu7y6xyMw", 
         "will":     lambda : "https://www.youtube.com/watch?v=YsfYyWc_BfE", 
@@ -68,7 +68,7 @@ def main():
         idframe += 1
         
         # resize the frame 
-        frame = cv2.resize(frame, None, fx=0.5, fy=0.5)
+        frame = cv2.resize(frame, None, fx=0.7, fy=0.7)
             
         # compute the grayscale image --> for the cascade classifier
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -78,7 +78,7 @@ def main():
         
         # loop over all the detected faces
         for (x,y,w,h) in faces:
-            frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
+            frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
             roi_gray = gray[y:y+h, x:x+w]
             roi_color = frame[y:y+h, x:x+w]
             
@@ -98,19 +98,18 @@ def main():
                 
             else:
                 #print(arr_classes)
-                predicted = max(set(arr_classes), key = arr_classes.count)
-                arr_classes = []
-                
-                text = "Predicted label: {}".format(predicted)
-                
-                cv2.putText(frame, text, (5, 25),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                
-                # display the frame with the classes  
-                cv2.imshow('videoframe',frame)   
-        
-                # stop the video till one key is pressed, to display the current label
-                cv2.waitKey(0)
+                if len(arr_classes) > 0:
+                    predicted = max(set(arr_classes), key = arr_classes.count)
+                    arr_classes = []
+
+                    cv2.putText(frame, predicted, (x, y+1),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+                    
+                    # display the frame with the classes  
+                    cv2.imshow('videoframe',frame)   
             
+                    # stop the video till one key is pressed, to display the current label
+                    cv2.waitKey(0)
+                
           
         cv2.imshow('videoframe',frame) 
         key = cv2.waitKey(10) 
@@ -121,7 +120,7 @@ def main():
             cv2.waitKey(0)
 
     cv2.destroyAllWindows() 
-
+    stream.stop()
 
 if __name__ == "__main__":
     main()
