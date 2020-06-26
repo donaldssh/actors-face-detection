@@ -1,7 +1,6 @@
 import cv2
 import time
 import numpy as np
-import argparse
 from vidgear.gears import CamGear
 
 
@@ -25,35 +24,14 @@ def video_url(argument):
     return switcher.get(argument, lambda :  "https://www.youtube.com/watch?v=-pwvctnQUYM")()
 
 
-def main():
+
+
+def video_classifier(face_cascade, net, stream, classes):
+ 
+    arr_classes = []
     
     # number of consecutive frames used to compute the class of the detected face
     n_consecutive_frames = 10;
-    
-    # extract the video url
-    parser = argparse.ArgumentParser(description='Actor video classifier')
-    parser.add_argument('--input', type=str, help='Path to video')  
-    args = parser.parse_args()
-    url_video = video_url(args.input)
-    
-    # load the classes used in our CNN
-    classes = [ "Adam Sandler", "Alyssa Milano", "Bruce Willis", "Denise Richards",
-                "George Clooney", "Gwyneth Paltrow", "Hugh Jackman", "Jason Statham",
-                "Jennifer Love Hewitt", "Lindsay Lohan", "Mark Ruffalo", 
-                "Robert Downey Jr", "Will Smith" ]
-
-
-    # load the trained CascadeClassifier for face detection
-    face_cascade = cv2.CascadeClassifier('../data/face_cascade_cv2/haarcascade_frontalface_default.xml')
-    
-    # load the CNN trained with matlab
-    net = cv2.dnn.readNetFromONNX("../data/trained_net/CNNNet_13.onnx")
-    
-    # load the youtube video
-    stream = CamGear(source=url_video, y_tube=True).start() # YouTube Video URL as input
-
-
-    arr_classes = []
     idframe = 0
     # loop over all the video frames
     while True:
@@ -120,7 +98,3 @@ def main():
             cv2.waitKey(0)
 
     cv2.destroyAllWindows() 
-    stream.stop()
-
-if __name__ == "__main__":
-    main()
