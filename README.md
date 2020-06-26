@@ -3,6 +3,7 @@ Project 3 Face detection - Digital Forensics UNIPD
 
 
 ## Libraries
-OpenCV 4, CamGears
+OpenCV4
+VidGear
 
 `pip install -r requirements.txt`
