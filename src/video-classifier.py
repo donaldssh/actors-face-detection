@@ -8,14 +8,27 @@ from vidgear.gears import CamGear
 # switcher used to get the corresponding youtube video url from the given input name
 def video_url(argument):
     switcher = {   
-        "adam" : lambda : "https://www.youtube.com/watch?v=eghK5yMpNuc",
-        "alyssa" : lambda : "https://www.youtube.com/watch?v=dmMbfKnT38k",
-        "bruce" : lambda : "https://www.youtube.com/watch?v=-pwvctnQUYM"
+        "adam":     lambda : "https://www.youtube.com/watch?v=eghK5yMpNuc",
+        "alyssa":   lambda : "https://www.youtube.com/watch?v=dmMbfKnT38k",
+        "bruce":    lambda : "https://www.youtube.com/watch?v=-pwvctnQUYM",
+        "denise":   lambda : "https://www.youtube.com/watch?v=6sb0Ii0EkUY",
+        "george":   lambda : "https://www.youtube.com/watch?v=0t1-Jy3UNRY",
+        "gwyneth":  lambda : "not found",
+        "hugh":     lambda : "https://www.youtube.com/watch?v=vJdLROysHHs",  
+        "jason":    lambda : "not found",
+        "jennifer": lambda : "not yet found",
+        "lindsay":  lambda : "not yet found",
+        "mark":     lambda : "https://www.youtube.com/watch?v=zuGp-0G1p4M", 
+        "robert":   lambda : "https://www.youtube.com/watch?v=w5cu7y6xyMw", 
+        "will":     lambda : "https://www.youtube.com/watch?v=YsfYyWc_BfE", 
     }
-    return switcher.get(argument, lambda :  bruce)()
+    return switcher.get(argument, lambda :  "https://www.youtube.com/watch?v=-pwvctnQUYM")()
 
 
 def main():
+    
+    # number of consecutive frames used to compute the class of the detected face
+    n_consecutive_frames = 10;
     
     # extract the video url
     parser = argparse.ArgumentParser(description='Actor video classifier')
@@ -39,13 +52,20 @@ def main():
     # load the youtube video
     stream = CamGear(source=url_video, y_tube=True).start() # YouTube Video URL as input
 
+
+    arr_classes = []
+    idframe = 0
     # loop over all the video frames
     while True:
+        
+        # read the next frame
         frame = stream.read()
         
         if frame is None:   
             print("End of the video")
             break
+        
+        idframe += 1
         
         # resize the frame 
         frame = cv2.resize(frame, None, fx=0.5, fy=0.5)
@@ -73,17 +93,27 @@ def main():
             # find the index of the class with higher probabilitiy
             idx = np.argsort(preds[0])[::-1][0]
             
-            text = "Label: {}, {:.2f}%".format(classes[idx], preds[0][idx] * 100)
-            
-            cv2.putText(frame, text, (5, 25),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            
-            print("[INFO] label: {}, probability: {:.5}".format( classes[idx], preds[0][idx]))    
-            
-                            
-        cv2.imshow('videoframe',frame)    
+            if idframe % n_consecutive_frames:
+                arr_classes.append(classes[idx])
+                
+            else:
+                #print(arr_classes)
+                predicted = max(set(arr_classes), key = arr_classes.count)
+                arr_classes = []
+                
+                text = "Predicted label: {}".format(predicted)
+                
+                cv2.putText(frame, text, (5, 25),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                
+                # display the frame with the classes  
+                cv2.imshow('videoframe',frame)   
         
+                # stop the video till one key is pressed, to display the current label
+                cv2.waitKey(0)
+            
+          
+        cv2.imshow('videoframe',frame) 
         key = cv2.waitKey(10) 
-        
         # quit if q is pressed, or pause if p is pressed
         if key == ord('q'): 
             break
@@ -95,4 +125,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
