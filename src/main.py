@@ -6,7 +6,8 @@ from vidgear.gears import CamGear
 # load my functions
 from video_utils import video_classifier, video_url
 
-
+# usage example:
+# python main.py --input jennifer
 def main():
     
     # extract the video url
@@ -28,7 +29,7 @@ def main():
     face_cascade = cv2.CascadeClassifier('../data/face_cascade_cv2/haarcascade_frontalface_default.xml')
     
     # load the CNN trained with matlab
-    net = cv2.dnn.readNetFromONNX("../data/trained_net/CNNNet_13.onnx")
+    net = cv2.dnn.readNetFromONNX("../data/trained_net/CNNNet_13_8epochs.onnx")
     
     # load the youtube video
     stream = CamGear(source=url, y_tube=True).start() # YouTube Video URL as input
