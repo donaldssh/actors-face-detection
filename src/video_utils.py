@@ -16,7 +16,7 @@ def video_url(argument):
         "hugh":     lambda : "https://www.youtube.com/watch?v=vJdLROysHHs",  
         "jason":    lambda : "https://www.youtube.com/watch?v=ehDVAfH9038",
         "jennifer": lambda : "https://www.youtube.com/watch?v=xt1bCqZaD0k",
-        "lindsay":  lambda : "https://www.youtube.com/watch?v=F6g85lp2wJc", #"https://www.youtube.com/watch?v=6oAdeUP4bhs",
+        "lindsay":  lambda : "https://www.youtube.com/watch?v=F6g85lp2wJc", 
         "mark":     lambda : "https://www.youtube.com/watch?v=zuGp-0G1p4M", 
         "robert":   lambda : "https://www.youtube.com/watch?v=w5cu7y6xyMw", 
         "will":     lambda : "https://www.youtube.com/watch?v=YsfYyWc_BfE", 
@@ -31,7 +31,7 @@ def video_classifier(face_cascade, net, stream, classes):
     arr_classes = []
     
     # number of consecutive frames used to compute the class of the detected face
-    n_consecutive_frames = 10;
+    n_consecutive_frames = 20
     idframe = 0
     # loop over all the video frames
     while True:
@@ -56,11 +56,19 @@ def video_classifier(face_cascade, net, stream, classes):
         
         # loop over all the detected faces
         for (x,y,w,h) in faces:
-            frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
-            roi_gray = gray[y:y+h, x:x+w]
+            #frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
+            #roi_color = frame[y:y+h, x:x+w]
+            
+            top_left = (x-int(w/6), y-int(h/6))
+            bottom_right = (x+w+int(w/6), y+h+int(h/6)) 
+            
+            
+            frame = cv2.rectangle(frame, top_left, bottom_right, (0,255,0),2)
+            
             roi_color = frame[y:y+h, x:x+w]
             
-            blob = cv2.dnn.blobFromImage(roi_color, 1, (64, 64), (104, 117, 123))
+            #blob = cv2.dnn.blobFromImage(roi_color, 1, (64, 64), (104, 117, 123))
+            blob = cv2.dnn.blobFromImage(roi_color, 1, (64, 64))
             net.setInput(blob)
             start = time.time()
             preds = net.forward()
