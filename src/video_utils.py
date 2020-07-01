@@ -7,8 +7,8 @@ from vidgear.gears import CamGear
 # switcher used to get the corresponding youtube video url from the given input name
 def video_url(argument):
     switcher = {   
-        "adam":     lambda : "https://www.youtube.com/watch?v=eghK5yMpNuc",
-        "alyssa":   lambda : "https://www.youtube.com/watch?v=dmMbfKnT38k",
+        "adam":     lambda : "https://www.youtube.com/watch?v=V4LxfzjRYQY",
+        "alyssa":   lambda : "https://www.youtube.com/watch?v=vSMC6lLfgLI",
         "bruce":    lambda : "https://www.youtube.com/watch?v=-pwvctnQUYM",
         "denise":   lambda : "https://www.youtube.com/watch?v=6sb0Ii0EkUY",
         "george":   lambda : "https://www.youtube.com/watch?v=0t1-Jy3UNRY",
@@ -17,7 +17,7 @@ def video_url(argument):
         "jason":    lambda : "https://www.youtube.com/watch?v=ehDVAfH9038",
         "jennifer": lambda : "https://www.youtube.com/watch?v=xt1bCqZaD0k",
         "lindsay":  lambda : "https://www.youtube.com/watch?v=F6g85lp2wJc", 
-        "mark":     lambda : "https://www.youtube.com/watch?v=zuGp-0G1p4M", 
+        "mark":     lambda : "https://www.youtube.com/watch?v=dmwO8tGHvdo", 
         "robert":   lambda : "https://www.youtube.com/watch?v=w5cu7y6xyMw", 
         "will":     lambda : "https://www.youtube.com/watch?v=YsfYyWc_BfE", 
     }
@@ -56,16 +56,15 @@ def video_classifier(face_cascade, net, stream, classes):
         
         # loop over all the detected faces
         for (x,y,w,h) in faces:
-            #frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
-            #roi_color = frame[y:y+h, x:x+w]
-            
-            top_left = (x-int(w/6), y-int(h/6))
-            bottom_right = (x+w+int(w/6), y+h+int(h/6)) 
-            
-            
-            frame = cv2.rectangle(frame, top_left, bottom_right, (0,255,0),2)
-            
+            frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
             roi_color = frame[y:y+h, x:x+w]
+            
+            # top_left = (x-int(w/6), y-int(h/6))
+            # bottom_right = (x+w+int(w/6), y+h+int(h/6))             
+            
+            # frame = cv2.rectangle(frame, top_left, bottom_right, (0,255,0),2)
+            
+            # roi_color = frame[y:y+h, x:x+w]
             
             #blob = cv2.dnn.blobFromImage(roi_color, 1, (64, 64), (104, 117, 123))
             blob = cv2.dnn.blobFromImage(roi_color, 1, (64, 64))
@@ -78,24 +77,33 @@ def video_classifier(face_cascade, net, stream, classes):
             
             # find the index of the class with higher probabilitiy
             idx = np.argsort(preds[0])[::-1][0]
-            
+
+
             if idframe % n_consecutive_frames:
                 arr_classes.append(classes[idx])
+                text_processing_info = "Processing"
+                cv2.putText(frame, text_processing_info, (5, 15),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+               
                 
             else:
-                #print(arr_classes)
+                print(arr_classes)
                 if len(arr_classes) > 0:
                     predicted = max(set(arr_classes), key = arr_classes.count)
                     arr_classes = []
 
                     cv2.putText(frame, predicted, (x, y+1),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-                    
+                    text_processing_info = "Press any key to continue"
+                    cv2.putText(frame, text_processing_info, (5, 15),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+               
+
                     # display the frame with the classes  
                     cv2.imshow('videoframe',frame)   
             
                     # stop the video till one key is pressed, to display the current label
                     cv2.waitKey(0)
-                
+
+
+ 
           
         cv2.imshow('videoframe',frame) 
         key = cv2.waitKey(10) 
