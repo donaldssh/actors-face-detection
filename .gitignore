@@ -1,3 +1,8 @@
-report/
+report/*
+# !report/report.pdf
+
 src/__pycache__/
 data/
+
+slides/*
+!slides/slides.pdf
