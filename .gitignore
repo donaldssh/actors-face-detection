@@ -1,5 +1,5 @@
 report/*
-# !report/report.pdf
+!report/report.pdf
 
 src/__pycache__/
 data/
