@@ -1,8 +1,13 @@
+src/__pycache__/
+
+# load only the report.pdf changes
 report/*
 !report/report.pdf
 
-src/__pycache__/
-data/
-
+# load only the slide.pdf changes
 slides/*
 !slides/slides.pdf
+
+# load only the currently used CNN
+data/trained_net/*
+!data/trained_net/CNNNet0107_2.onnx
