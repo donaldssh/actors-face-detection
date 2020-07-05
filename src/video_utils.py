@@ -56,17 +56,14 @@ def video_classifier(face_cascade, net, stream, classes):
         
         # loop over all the detected faces
         for (x,y,w,h) in faces:
+            
+            # wh = int((w + h) / 2)
+            # frame = cv2.rectangle(frame,(x,y),(x+wh,y+wh),(0,255,0),2)
+            # roi_color = frame[y:y+wh, x:x+wh]
+            
             frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
             roi_color = frame[y:y+h, x:x+w]
             
-            # top_left = (x-int(w/6), y-int(h/6))
-            # bottom_right = (x+w+int(w/6), y+h+int(h/6))             
-            
-            # frame = cv2.rectangle(frame, top_left, bottom_right, (0,255,0),2)
-            
-            # roi_color = frame[y:y+h, x:x+w]
-            
-            #blob = cv2.dnn.blobFromImage(roi_color, 1, (64, 64), (104, 117, 123))
             blob = cv2.dnn.blobFromImage(roi_color, 1, (64, 64))
             net.setInput(blob)
             start = time.time()
@@ -86,7 +83,7 @@ def video_classifier(face_cascade, net, stream, classes):
                
                 
             else:
-                print(arr_classes)
+                # print(arr_classes)
                 if len(arr_classes) > 0:
                     predicted = max(set(arr_classes), key = arr_classes.count)
                     arr_classes = []
