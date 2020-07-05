@@ -1,7 +1,7 @@
 # actors-face-detection
 Digital Forensics - UNIPD
 
-Project 3: Face Detection and Classification for video signals using Matlab, Python & OpenCV
+Project 3: Real-time Face Detection and Classification from YouTube videos using Matlab, Python & OpenCV
 
 
 ## Libraries
