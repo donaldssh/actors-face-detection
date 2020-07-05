@@ -7,7 +7,7 @@ from vidgear.gears import CamGear
 from video_utils import video_classifier, video_url
 
 # usage example:
-# python main.py --input jennifer
+# python main.py --video jennifer
 def main():
     
     # extract the video url

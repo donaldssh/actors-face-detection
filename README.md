@@ -10,3 +10,9 @@ OpenCV4
 VidGear
 
 `pip install -r requirements.txt`
+
+
+
+## Run
+
+`python main.py --video url`

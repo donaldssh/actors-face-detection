@@ -3,7 +3,6 @@ import time
 import numpy as np
 from vidgear.gears import CamGear
 
-
 # switcher used to get the corresponding youtube video url from the given input name
 def video_url(argument):
     switcher = {   
@@ -22,8 +21,6 @@ def video_url(argument):
         "will":     lambda : "https://www.youtube.com/watch?v=YsfYyWc_BfE", 
     }
     return switcher.get(argument, lambda :  argument)()
-
-
 
 
 def video_classifier(face_cascade, net, stream, classes):
@@ -98,9 +95,6 @@ def video_classifier(face_cascade, net, stream, classes):
             
                     # stop the video till one key is pressed, to display the current label
                     cv2.waitKey(0)
-
-
- 
           
         cv2.imshow('videoframe',frame) 
         key = cv2.waitKey(10) 
