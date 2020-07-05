@@ -7,14 +7,18 @@ addpath('func');
 %Npeople is the number of subjects
 Npeople = 13;
 
+%Set the path to the train and test set
+train_images = '../croppedfaces'
+test_images = '../croppedfacesTest'
+
 %load training data
-im = imageDatastore('croppedfaces','IncludeSubfolders',true,'LabelSource','foldernames');
+im = imageDatastore(train_images,'IncludeSubfolders',true,'LabelSource','foldernames');
 % Resize the images to the input size of the net
 im.ReadFcn = @(loc)imresize(imread(loc),[64,64]);
 %Split the training set into training (80%) and validation (20%) 
 [Train ,Validation] = splitEachLabel(im,0.8,'randomized');
 %Load test data
-Test = imageDatastore('croppedfacesTest','IncludeSubfolders',true,'LabelSource','foldernames');
+Test = imageDatastore(test_images,'IncludeSubfolders',true,'LabelSource','foldernames');
 % Resize the images to the input size of the net
 Test.ReadFcn = @(loc)imresize(imread(loc),[64,64]);
  
