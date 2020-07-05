@@ -12,7 +12,7 @@ def main():
     
     # extract the video url
     parser = argparse.ArgumentParser(description='Actor video classifier')
-    parser.add_argument('--video', type=str, help='Default youtube videos')  
+    parser.add_argument('--video', type=str, help='Url youtube videos')  
     args = parser.parse_args()
 
     url = video_url(args.video)
