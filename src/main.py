@@ -12,11 +12,10 @@ def main():
     
     # extract the video url
     parser = argparse.ArgumentParser(description='Actor video classifier')
-    parser.add_argument('--input', type=str, help='Path to video')  
+    parser.add_argument('--video', type=str, help='Default youtube videos')  
     args = parser.parse_args()
-    
-    # set the video url
-    url = video_url(args.input)
+
+    url = video_url(args.video)
     
     # load the classes used in our CNN
     classes = [ "Adam Sandler", "Alyssa Milano", "Bruce Willis", "Denise Richards",

@@ -21,7 +21,7 @@ def video_url(argument):
         "robert":   lambda : "https://www.youtube.com/watch?v=w5cu7y6xyMw", 
         "will":     lambda : "https://www.youtube.com/watch?v=YsfYyWc_BfE", 
     }
-    return switcher.get(argument, lambda :  "https://www.youtube.com/watch?v=-pwvctnQUYM")()
+    return switcher.get(argument, lambda :  argument)()
 
 
 
