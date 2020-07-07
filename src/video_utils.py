@@ -22,6 +22,22 @@ def video_url(argument):
     }
     return switcher.get(argument, lambda :  argument)()
 
+# rescale the video frame keeping the aspect ratio
+# percert is the percentual of pixel of the initial frame that will be in the output frame
+def rescale_frame(frame, percent):  
+    
+    old_width = int(frame.shape[1])
+    old_height = int(frame.shape[0])
+    old_area = old_width * old_height
+    new_area = old_area * percent 
+    
+    # compute the K constant of similitude between 2 rectangles
+    k_simil = np.sqrt(old_area/new_area)  
+    new_width = int(old_width / k_simil)   
+    new_height = int(old_height / k_simil)
+    dim = (new_width, new_height)
+    return cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
+                      
 
 def video_classifier(face_cascade, net, stream, classes):
  
@@ -42,8 +58,8 @@ def video_classifier(face_cascade, net, stream, classes):
         
         idframe += 1
         
-        # resize the frame 
-        frame = cv2.resize(frame, None, fx=0.7, fy=0.7)
+        # resize the frame to 40% of the initial area (number of pixels)
+        frame = rescale_frame(frame, 0.4)
             
         # compute the grayscale image --> for the cascade classifier
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
