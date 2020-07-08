@@ -7,14 +7,18 @@ from vidgear.gears import CamGear
 from video_utils import video_classifier, video_url
 
 # usage example:
-# python main.py --video jennifer
+# python main.py --video url
 def main():
     
     # extract the video url
     parser = argparse.ArgumentParser(description='Actor video classifier')
-    parser.add_argument('--video', type=str, help='Url youtube videos')  
+    parser.add_argument('--video', type=str, help='Url to youtube video')  
     args = parser.parse_args()
-
+    
+    if args.video is None:
+        print("No url to YouTube video provided \nUsage: python main.py --video url")
+        return 0
+        
     url = video_url(args.video)
     
     # load the classes used in our CNN
