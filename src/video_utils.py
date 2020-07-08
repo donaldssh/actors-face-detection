@@ -22,20 +22,25 @@ def video_url(argument):
     }
     return switcher.get(argument, lambda :  argument)()
 
+
 # rescale the video frame keeping the aspect ratio
 # percert is the percentual of pixel of the initial frame that will be in the output frame
 def rescale_frame(frame, percent):  
     
+    # compute old and new area
     old_width = int(frame.shape[1])
     old_height = int(frame.shape[0])
     old_area = old_width * old_height
     new_area = old_area * percent 
     
-    # compute the K constant of similitude between 2 rectangles
+    # compute the constant of similitude between 2 rectangles
     k_simil = np.sqrt(old_area/new_area)  
+
+    # find the new dimension of the frame
     new_width = int(old_width / k_simil)   
     new_height = int(old_height / k_simil)
     dim = (new_width, new_height)
+
     return cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
                       
 
@@ -46,6 +51,7 @@ def video_classifier(face_cascade, net, stream, classes):
     # number of consecutive frames used to compute the class of the detected face
     n_consecutive_frames = 20
     idframe = 0
+
     # loop over all the video frames
     while True:
         
@@ -70,10 +76,6 @@ def video_classifier(face_cascade, net, stream, classes):
         # loop over all the detected faces
         for (x,y,w,h) in faces:
             
-            # wh = int((w + h) / 2)
-            # frame = cv2.rectangle(frame,(x,y),(x+wh,y+wh),(0,255,0),2)
-            # roi_color = frame[y:y+wh, x:x+wh]
-            
             frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
             roi_color = frame[y:y+h, x:x+w]
             
@@ -87,7 +89,6 @@ def video_classifier(face_cascade, net, stream, classes):
             
             # find the index of the class with higher probabilitiy
             idx = np.argsort(preds[0])[::-1][0]
-
 
             if idframe % n_consecutive_frames:
                 arr_classes.append(classes[idx])
@@ -105,7 +106,6 @@ def video_classifier(face_cascade, net, stream, classes):
                     text_processing_info = "Press any key to continue"
                     cv2.putText(frame, text_processing_info, (5, 15),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                
-
                     # display the frame with the classes  
                     cv2.imshow('videoframe',frame)   
             
@@ -114,6 +114,7 @@ def video_classifier(face_cascade, net, stream, classes):
           
         cv2.imshow('videoframe',frame) 
         key = cv2.waitKey(10) 
+
         # quit if q is pressed, or pause if p is pressed
         if key == ord('q'): 
             break
